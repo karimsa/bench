@@ -9,7 +9,9 @@
         "access": "public"
     },
     "scripts": {
-        "build": "esbuild --target=node12 bench.js --format=cjs --outfile=bench.dist.js"
+        "build": "esbuild --target=node12 bench.js --format=cjs --outfile=bench.dist.js",
+        "format": "prettier --write bench.js",
+        "lint": "prettier --check bench.js"
     },
     "devDependencies": {
         "esbuild": "0.14.10",

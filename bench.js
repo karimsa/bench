@@ -1,6 +1,6 @@
 // For documentation on benchmarks, please see: `src/commands/bench.js`
 
-import { PerformanceObserver } from 'perf_hooks'
+import { performance, PerformanceObserver } from 'perf_hooks'
 
 import chalk from 'chalk'
 import createDebug from 'debug'
@@ -21,7 +21,7 @@ function ttywrite(stream, str) {
 const isCI = !!process.env.CI
 
 const TableUtils = require('cli-table/lib/utils')
-TableUtils.truncate = str => str
+TableUtils.truncate = (str) => str
 const Table = require('cli-table')
 
 const debug = createDebug('wiz')
@@ -63,8 +63,8 @@ function appendTable(row) {
 		}
 		return console.log(
 			`${row[0]}${' '.repeat(
-				Math.max(1, longestBenchmarkTitleLength + 13 - row[0].length),
-			)}${row[1]}\t${row.slice(2).join('\t')}`,
+				Math.max(1, longestBenchmarkTitleLength + 13 - row[0].length)
+			)}${row[1]}\t${row.slice(2).join('\t')}`
 		)
 	}
 
@@ -236,6 +236,30 @@ export async function runAllBenchmarks() {
 						}
 					}
 				},
+				timeSync(name, fn) {
+					const startId = uuid()
+					performance.mark(startId)
+
+					try {
+						return fn()
+					} finally {
+						const endId = uuid()
+						performance.mark(endId)
+						performance.measure(name, startId, endId)
+					}
+				},
+				async timeAsync(name, fn) {
+					const startId = uuid()
+					performance.mark(startId)
+
+					try {
+						return await fn()
+					} finally {
+						const endId = uuid()
+						performance.mark(endId)
+						performance.measure(name, startId, endId)
+					}
+				},
 				resetTimer() {
 					startTime = microtime.now()
 					timerIsRunning = true
@@ -269,8 +293,8 @@ export async function runAllBenchmarks() {
 			let numPerfEventTypes = 0
 
 			const perfEvents = new Map()
-			const perfObserver = new PerformanceObserver(events => {
-				events.getEntries().forEach(event => {
+			const perfObserver = new PerformanceObserver((events) => {
+				events.getEntries().forEach((event) => {
 					if (!perfEvents.has(event.name)) {
 						numPerfEventTypes++
 						perfEvents.set(event.name, [])
@@ -295,7 +319,7 @@ export async function runAllBenchmarks() {
 
 				if (!numIterationsWasChecked) {
 					throw new Error(
-						`Benchmark '${title}' ran without calling b.N() - please see documentation`,
+						`Benchmark '${title}' ran without calling b.N() - please see documentation`
 					)
 				}
 
@@ -318,7 +342,7 @@ export async function runAllBenchmarks() {
 							benchTime: options.benchTime,
 							maxIterations: options.maxIterations,
 							growthFn: options.growthFn,
-						},
+						}
 					)
 					break
 				}
@@ -364,8 +388,8 @@ export async function runAllBenchmarks() {
 					appendTable([
 						chalk.gray(
 							`\tObserved ${numPerfEventTypes} events with ${prettyNumber(
-								numPerfEvents,
-							)} occurrences.`,
+								numPerfEvents
+							)} occurrences.`
 						),
 					])
 				}
@@ -381,7 +405,7 @@ export async function runAllBenchmarks() {
 						}
 						return '\t' + line
 					})
-					.join('\n')}`,
+					.join('\n')}`
 			)
 		}
 	}
@@ -397,7 +421,7 @@ export async function runAllBenchmarks() {
 function addBenchmark(title, handlers) {
 	if (benchmarkRunningHasBegun) {
 		throw new Error(
-			`Benchmark "${title}" registered after execution has already begun`,
+			`Benchmark "${title}" registered after execution has already begun`
 		)
 	}
 	if (registeredBenchmarks.has(title)) {
@@ -405,7 +429,7 @@ function addBenchmark(title, handlers) {
 	}
 	longestBenchmarkTitleLength = Math.max(
 		longestBenchmarkTitleLength,
-		title.length,
+		title.length
 	)
 	registeredBenchmarks.set(title, handlers)
 }
@@ -457,7 +481,7 @@ function addBenchmark(title, handlers) {
  * @type function
  */
 export const benchmark = Object.assign(
-	function(title, ...handlers) {
+	function (title, ...handlers) {
 		if (!onlyAcceptOnlys) {
 			addBenchmark(title, handlers)
 		}
@@ -479,6 +503,5 @@ export const benchmark = Object.assign(
 				process.nextTick(runAllBenchmarks)
 			}
 		},
-	},
+	}
 )
-
