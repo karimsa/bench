@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import createDebug from 'debug'
 import * as ansi from 'ansi-escapes'
 import * as microtime from 'microtime'
+import { v4 as uuid } from 'uuid'
 
 function ttywrite(stream, str) {
 	if (str === undefined) {
