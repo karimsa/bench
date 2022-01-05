@@ -1,0 +1,22 @@
+{
+    "name": "@karimsa/bench",
+    "private": false,
+    "main": "bench.dist.js",
+    "version": "0.12.7",
+    "description": "Minimal benchmarking JS library.",
+    "scripts": {
+        "build": "esbuild --target=node12 bench.js --format=cjs --outfile=bench.dist.js"
+    },
+    "devDependencies": {
+        "esbuild": "0.14.10",
+        "eslint": "8.6.0",
+        "prettier": "2.5.1"
+    },
+    "dependencies": {
+        "ansi-escapes": "4.3.2",
+        "chalk": "4",
+        "cli-table": "^0.3.11",
+        "debug": "4.3.3",
+        "microtime": "3.0.0"
+    }
+}
