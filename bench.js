@@ -52,7 +52,7 @@ const cliTable = new Table({
 		'right-mid': '',
 		middle: ' ',
 	},
-	colAligns: ['left', 'right', 'right'],
+	colAligns: ['left', 'right', 'right', 'right'],
 })
 
 const benchConfig = JSON.parse(process.env.WIZ_BENCH || '{}')
@@ -372,17 +372,23 @@ export async function runAllBenchmarks() {
 							const totalMSDuration = durations.reduce((a, b) => a + b, 0)
 							const duration = ms((1e3 * totalMSDuration) / durations.length)
 							const opsPerSecond = durations.length / (totalMSDuration / 1e3)
-							return [eventType, opsPerSecond, duration]
+							return [eventType, opsPerSecond, duration, durations.length]
 						})
 						.sort((a, b) => {
 							return b[1] - a[1]
 						})
 
-					for (const [eventType, opsPerSecond, { time, unit }] of entries) {
+					for (const [
+						eventType,
+						opsPerSecond,
+						{ time, unit },
+						numEvents,
+					] of entries) {
 						appendTable([
 							`\t ↪ ${eventType}`,
 							`${prettyNumber(Math.floor(opsPerSecond))} ops/s`,
 							`${time} ${unit}/op`,
+							`${Math.floor(numEvents / numIterations)} events/op`,
 						])
 					}
 				} else {
