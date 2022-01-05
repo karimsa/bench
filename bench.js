@@ -148,7 +148,7 @@ function loadBenchConfig() {
 		minIterations: 1,
 		maxIterations: Infinity,
 		forceExit: false,
-		perfHooks: false,
+		perfHooks: true,
 	}
 
 	if (config.growthFn === 'fibonacci') {
