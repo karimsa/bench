@@ -1,9 +1,13 @@
 {
-    "name": "@karimsa/bench",
     "private": false,
-    "main": "bench.dist.js",
+    "name": "@karimsa/bench",
     "version": "0.12.7",
     "description": "Minimal benchmarking JS library.",
+    "main": "bench.dist.js",
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "esbuild --target=node12 bench.js --format=cjs --outfile=bench.dist.js"
     },
