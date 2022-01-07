@@ -386,8 +386,8 @@ export async function runAllBenchmarks() {
 					] of entries) {
 						appendTable([
 							`\t ↪ ${eventType}`,
-							`${prettyNumber(Math.floor(opsPerSecond))} ops/s`,
-							`${time} ${unit}/op`,
+							`${prettyNumber(Math.floor(opsPerSecond))} events/s`,
+							`${time} ${unit}/event`,
 							`${Math.floor(numEvents / numIterations)} events/op`,
 						])
 					}
