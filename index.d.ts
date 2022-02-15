@@ -12,7 +12,7 @@ declare module '@karimsa/bench' {
         N(): number
         runConcurrently(runner: (iteration: number) => Promise<void>): Promise<void>
         timeSync<T>(name: string, handler: () => T): T
-        timeAsync<T>(name: string, handler: () => Promise<T>): T
+        timeAsync<T>(name: string, handler: () => Promise<T>): Promise<T>
         resetTimer(): void
         stopTimer(): void
     }
