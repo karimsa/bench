@@ -52,7 +52,7 @@ const cliTable = new Table({
 		'right-mid': '',
 		middle: ' ',
 	},
-	colAligns: ['left', 'right', 'right', 'right'],
+	colAligns: ['left', 'right', 'right', 'right', 'right', 'right'],
 })
 
 const benchConfig = JSON.parse(process.env.WIZ_BENCH || '{}')
@@ -105,21 +105,25 @@ function ms(time) {
 		return {
 			time: Math.round((time / (1000 * 1000 * 60)) * 10) / 10,
 			unit: 'm',
+			raw: time,
 		}
 	} else if (time >= 1000 * 1000) {
 		return {
 			time: Math.round((time / (1000 * 1000)) * 10) / 10,
 			unit: 's',
+			raw: time,
 		}
 	} else if (time >= 1000) {
 		return {
 			time: Math.round((time / 1000) * 10) / 10,
 			unit: 'ms',
+			raw: time,
 		}
 	}
 	return {
 		time: Math.round(time * 10) / 10,
 		unit: 'µs',
+		raw: time,
 	}
 }
 
@@ -367,21 +371,25 @@ export async function runAllBenchmarks() {
 			])
 			if (numPerfEventTypes > 0) {
 				if (options.perfHooks) {
+					const totalTime = [...perfEvents.values()].reduce((sum, durations) => sum + durations.reduce((sum, time) => sum + time, 0), 0);
 					const entries = Array.from(perfEvents.entries())
 						.map(([eventType, durations]) => {
 							const totalMSDuration = durations.reduce((a, b) => a + b, 0)
 							const duration = ms((1e3 * totalMSDuration) / durations.length)
 							const opsPerSecond = durations.length / (totalMSDuration / 1e3)
-							return [eventType, opsPerSecond, duration, durations.length]
+							const totalDuration = ms(totalMSDuration)
+							return [eventType, opsPerSecond, duration, totalDuration, Math.floor((totalMSDuration / totalTime) * 100), durations.length]
 						})
 						.sort((a, b) => {
-							return b[1] - a[1]
+							return b[3].raw - a[3].raw
 						})
 
 					for (const [
 						eventType,
 						opsPerSecond,
 						{ time, unit },
+						cumulativeTimeSpentMs,
+						cumulativeTimeSpentPercentage,
 						numEvents,
 					] of entries) {
 						appendTable([
@@ -389,6 +397,8 @@ export async function runAllBenchmarks() {
 							`${prettyNumber(Math.floor(opsPerSecond))} events/s`,
 							`${time} ${unit}/event`,
 							`${Math.floor(numEvents / numIterations)} events/op`,
+							`${cumulativeTimeSpentMs.time} ${cumulativeTimeSpentMs.unit}`,
+							`${cumulativeTimeSpentPercentage}%`
 						])
 					}
 				} else {
