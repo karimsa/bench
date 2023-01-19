@@ -5,7 +5,6 @@ import { performance, PerformanceObserver } from 'perf_hooks'
 import chalk from 'chalk'
 import createDebug from 'debug'
 import * as ansi from 'ansi-escapes'
-import * as microtime from 'microtime'
 import { v4 as uuid } from 'uuid'
 
 function ttywrite(stream, str) {
@@ -266,7 +265,7 @@ export async function runAllBenchmarks() {
 					}
 				},
 				resetTimer() {
-					startTime = microtime.now()
+					startTime = performance.now() * 1e3
 					timerIsRunning = true
 					debug(`Timer reset to: ${startTime}`)
 				},
@@ -274,7 +273,7 @@ export async function runAllBenchmarks() {
 					if (!timerIsRunning) {
 						throw new Error(`Timer stopped twice`)
 					}
-					endTime = microtime.now()
+					endTime = performance.now() * 1e3
 					timerIsRunning = false
 					debug(`Timer stopped at: ${endTime} (+${endTime - startTime}µs)`)
 				},
